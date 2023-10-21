@@ -10,6 +10,13 @@ namespace TibberBot.Repository
         /// <param name="execution"></param>
         /// <returns></returns>
         Task<ExecutionRecord?> RecordExecution(ExecutionRecord execution);
-        Task<IEnumerable<ExecutionRecord>> GetAllExecutions();
+
+        /// <summary>
+        /// Fetches <see cref="ExecutionRecord"/> from the database
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="sort"></param>
+        /// <returns></returns>
+        Task<IEnumerable<ExecutionRecord>> GetExecutions(int limit = 100, string sort = "desc");
     }
 }

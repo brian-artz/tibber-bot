@@ -40,5 +40,13 @@ namespace TibberBot.Controllers
 
             return new JsonResult(storedRecord, new JsonSerializerOptions() { WriteIndented = true});
         }
+
+        [Route("/tibber-developer-test/get-records")]
+        [HttpGet]
+        public async Task<ActionResult> GetCleaningRecords(int limit = 100, string sort = "desc")
+        {
+            var records = await _executionsRepository.GetExecutions(limit, sort);
+            return new JsonResult(records, new JsonSerializerOptions() { WriteIndented = true });
+        }
     }
 }
