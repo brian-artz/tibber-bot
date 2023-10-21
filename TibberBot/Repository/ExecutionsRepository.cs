@@ -6,55 +6,49 @@ namespace TibberBot.Repository
     public class ExecutionsRepository : IExecutionsRepository
     {
         private readonly ILogger<ExecutionsRepository> _logger;
-        private readonly string _connectionString;
+        private readonly NpgsqlDataSource _dataSource;
 
-        public ExecutionsRepository(ILogger<ExecutionsRepository> logger, string connectionString)
+        public ExecutionsRepository(ILogger<ExecutionsRepository> logger, NpgsqlDataSource dataSource)
         {
             _logger = logger;
-            _connectionString = connectionString;
+            _dataSource = dataSource;
         }
 
-        public async Task<bool> RecordExecutions(IEnumerable<ExecutionRecord> executions)
+        public async Task<ExecutionRecord?> RecordExecution(ExecutionRecord execution)
         {
-            int rowsInserted = 0;
-            await using var conn = new NpgsqlConnection(_connectionString);
             try
             {
-                await conn.OpenAsync();
-                var batch = new NpgsqlBatch(conn);
+                await using var cmd = _dataSource.CreateCommand(
+                        "INSERT INTO executions (commands, result, duration) " +
+                        "VALUES (@commands, @result, @duration)" +
+                        "RETURNING id, timestamp");
+                cmd.Parameters.AddWithValue("commands", execution.Commands);
+                cmd.Parameters.AddWithValue("result", execution.Result);
+                cmd.Parameters.AddWithValue("duration", execution.Duration);
 
-                foreach (var execution in executions)
+                _logger.LogDebug("SQL command to be executed: {cmd} with params {params}", cmd.CommandText, execution.ToString());
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
                 {
-                    var cmd = new NpgsqlBatchCommand(
-                        "INSERT INTO executions (timestamp, commands, result, duration) " +
-                        "VALUES (@timestamp, @commands, @result, @duration)");
-                    cmd.Parameters.AddWithValue("timestamp", DateTime.UtcNow);
-                    cmd.Parameters.AddWithValue("commands", execution.Commands);
-                    cmd.Parameters.AddWithValue("result", execution.Result);
-                    cmd.Parameters.AddWithValue("duration", execution.Duration);
-                    
-                    batch.BatchCommands.Add(cmd);
-                    _logger.LogDebug("SQL command added to batch: {cmd} with params {params}", cmd.CommandText, execution.ToString());
+                    var id = reader.GetInt64(0);
+                    var timestamp = reader.GetDateTime(1);
+                    execution = execution with { Id = id, TimeStamp = timestamp };
+                    _logger.LogInformation("New row inserted into executions table with id: {id}", id);
                 }
 
-                var newRows = await batch.ExecuteNonQueryAsync();
-                rowsInserted += newRows;
-                _logger.LogInformation("{num} new rows inserted into executions table", newRows);
             }
             catch (Exception ex)
             {
-
                 _logger.LogError("Failed to insert to db: {error}", ex);
-            }
-            finally
-            {
-                await conn.CloseAsync();
+                return null;
             }
 
-            return rowsInserted > 0;
+            return execution;
         }
 
-        public Task<IEnumerable<ExecutionRecord>> GetExecutions()
+        public Task<IEnumerable<ExecutionRecord>> GetAllExecutions()
         {
             //todo
             throw new NotImplementedException();

@@ -4,7 +4,12 @@ namespace TibberBot.Repository
 {
     public interface IExecutionsRepository
     {
-        Task<bool> RecordExecutions(IEnumerable<ExecutionRecord> executions);
-        Task<IEnumerable<ExecutionRecord>> GetExecutions();
+        /// <summary>
+        /// Stores an <see cref="ExecutionRecord"/> in a database
+        /// </summary>
+        /// <param name="execution"></param>
+        /// <returns></returns>
+        Task<ExecutionRecord?> RecordExecution(ExecutionRecord execution);
+        Task<IEnumerable<ExecutionRecord>> GetAllExecutions();
     }
 }

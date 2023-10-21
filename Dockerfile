@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["TibberBot.csproj", "."]
+COPY ["TibberBot/TibberBot.csproj", "."]
 RUN dotnet restore "./TibberBot.csproj"
 COPY . .
 WORKDIR "/src/."

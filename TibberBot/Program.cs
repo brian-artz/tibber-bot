@@ -1,5 +1,6 @@
-
+using Npgsql;
 using Serilog;
+using TibberBot.Cleaners;
 using TibberBot.Repository;
 
 namespace TibberBot
@@ -19,7 +20,7 @@ namespace TibberBot
                 .Enrich.FromLogContext()
                 .WriteTo.Console(outputTemplate:
                     "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}] [{Level:u3}] {Message:lj}{NewLine}{Exception}");
-            
+
             Log.Logger = loggerConfiguration.CreateLogger();
             Log.Information("Starting TibberBot...");
 
@@ -31,8 +32,12 @@ namespace TibberBot
             if (string.IsNullOrEmpty(executionsConnString))
                 throw new InvalidOperationException("Executions connection string missing");
 
+            builder.Services.AddNpgsqlDataSource(executionsConnString);
             builder.Services.AddSingleton<IExecutionsRepository>(
-                provider => new ExecutionsRepository(provider.GetRequiredService<ILogger<ExecutionsRepository>>(), executionsConnString)
+                provider => new ExecutionsRepository(provider.GetRequiredService<ILogger<ExecutionsRepository>>(), provider.GetRequiredService<NpgsqlDataSource>())
+            );
+            builder.Services.AddSingleton<ICleaner>(
+                provider => new OfficeCleaner(provider.GetRequiredService<ILogger<OfficeCleaner>>())
             );
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
