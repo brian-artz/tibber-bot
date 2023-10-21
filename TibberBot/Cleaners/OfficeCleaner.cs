@@ -27,23 +27,24 @@ namespace TibberBot.Cleaners
                 {
                     _logger.LogInformation("Calculating next move...");
                     var newPos = Calculate(currentPos, command);
+
                     if (!IsInBounds(newPos))
                         throw new InvalidOperationException("Robot went out of bounds");
+
                     if (!uniqueSpacesCleaned.Contains(newPos))
                     {
                         _logger.LogInformation("Cleaning new area...");
                         var newArea = EnumerateNewPositions(currentPos, command);
                         uniqueSpacesCleaned.UnionWith(newArea);
                     }
+                    else
+                    {
+                        _logger.LogInformation("Already cleaned this area");
+                    }
+
                     currentPos = newPos;
                     commandsRun++;
                 }
-                // foreach command
-                // - calculate end position
-                // - check if hashset has end position
-                // - - if yes, set currentPosition & go to next command
-                // - - if no, add positions to hashset
-                // - set currentPosition = calculated end position
             }
             catch (Exception ex)
             {
@@ -68,14 +69,7 @@ namespace TibberBot.Cleaners
 
         private static Position Calculate(Position current, Command command)
         {
-            return command.Direction.ToLower() switch
-            {
-                "north" => new Position(current.X, current.Y + command.Steps),
-                "south" => new Position(current.X, current.Y - command.Steps),
-                "east" => new Position(current.X + command.Steps, current.Y),
-                "west" => new Position(current.X - command.Steps, current.Y),
-                _ => current,
-            };
+            return Calculate(current, command.Direction, command.Steps);
         }
 
         private static IEnumerable<Position> EnumerateNewPositions(Position current, Command command)
@@ -83,18 +77,23 @@ namespace TibberBot.Cleaners
             var posList = new List<Position>();
             for (int i = 0; i < command.Steps; i++)
             {
-                var newPos = command.Direction.ToLower() switch
-                {
-                    "north" => new Position(current.X, current.Y + 1),
-                    "south" => new Position(current.X, current.Y - 1),
-                    "east" => new Position(current.X + 1, current.Y),
-                    "west" => new Position(current.X - 1, current.Y),
-                    _ => current,
-                };
+                var newPos = Calculate(current, command.Direction, 1);
                 posList.Add(newPos);
                 current = newPos;
             }
             return posList;
+        }
+
+        private static Position Calculate(Position current, string direction, int steps)
+        {
+            return direction.ToLower() switch
+            {
+                "north" => new Position(current.X, current.Y + steps),
+                "south" => new Position(current.X, current.Y - steps),
+                "east" => new Position(current.X + steps, current.Y),
+                "west" => new Position(current.X - steps, current.Y),
+                _ => current,
+            };
         }
     }
 }
