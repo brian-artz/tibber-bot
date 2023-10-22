@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using TibberBot.Dto;
+using TibberBot.Helpers;
 
 namespace TibberBot.Cleaners
 {
@@ -73,31 +74,12 @@ namespace TibberBot.Cleaners
 
         private static Position Calculate(Position current, Command command)
         {
-            return Calculate(current, command.Direction, command.Steps);
+            return current.Calculate(command.Direction, command.Steps);
         }
 
         private static IEnumerable<Position> EnumerateNewPositions(Position current, Command command)
         {
-            var posList = new List<Position>();
-            for (int i = 0; i < command.Steps; i++)
-            {
-                var newPos = Calculate(current, command.Direction, 1);
-                posList.Add(newPos);
-                current = newPos;
-            }
-            return posList;
-        }
-
-        private static Position Calculate(Position current, string direction, int steps)
-        {
-            return direction.ToLower() switch
-            {
-                "north" => new Position(current.X, current.Y + steps),
-                "south" => new Position(current.X, current.Y - steps),
-                "east" => new Position(current.X + steps, current.Y),
-                "west" => new Position(current.X - steps, current.Y),
-                _ => current,
-            };
+            return current.EnumerateNewPositions(command.Direction, command.Steps);
         }
     }
 }
