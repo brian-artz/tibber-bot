@@ -22,7 +22,7 @@ namespace TibberBot.Controllers
 
         [Route("/tibber-developer-test/enter-path")]
         [HttpPost]
-        public async Task<ActionResult> CleanPath([FromBody]EnterPathRequest request)
+        public async Task<ActionResult> CleanPath([FromBody]CleanPathRequest request)
         {
             // - validate input e.g., not too many steps or out of bounds
             if (!request.IsValid())

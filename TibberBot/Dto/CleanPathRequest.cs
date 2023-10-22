@@ -2,7 +2,7 @@
 
 namespace TibberBot.Dto
 {
-    public record EnterPathRequest
+    public record CleanPathRequest
     {
         [JsonPropertyName("start")]
         public Position Start { get; set; }
@@ -10,7 +10,7 @@ namespace TibberBot.Dto
         [JsonPropertyName("commands")]
         public IEnumerable<Command> Commands { get; set; } = Array.Empty<Command>();
 
-        public EnterPathRequest(Position start, IEnumerable<Command> commands)
+        public CleanPathRequest(Position start, IEnumerable<Command> commands)
         {
             Start = start;
             Commands = commands;
