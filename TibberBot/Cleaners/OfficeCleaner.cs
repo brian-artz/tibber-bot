@@ -18,6 +18,7 @@ namespace TibberBot.Cleaners
         {
             var uniqueSpacesCleaned = new HashSet<Position>() { start };
             var currentPos = start;
+            _logger.LogInformation("Starting new cleaning job at position: {pos}", start);
             var stopWatch = Stopwatch.StartNew();
             int commandsRun = 0;
 
@@ -53,11 +54,14 @@ namespace TibberBot.Cleaners
             }
 
             stopWatch.Stop();
+            _logger.LogInformation("Finished cleaning at final position: {pos}", currentPos);
             return new ExecutionRecord()
             {
+                StartingPosition = start,
                 Commands = commandsRun,
                 Result = uniqueSpacesCleaned.Count,
-                Duration = stopWatch.Elapsed.TotalSeconds
+                Duration = stopWatch.Elapsed.TotalSeconds,
+                EndingPosition = currentPos
             };
         }
 

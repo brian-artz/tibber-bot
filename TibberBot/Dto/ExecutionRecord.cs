@@ -17,6 +17,10 @@ namespace TibberBot.Dto
         public int Result { get; set; }
         [JsonPropertyName("duration")]
         public double Duration { get; set; }
+        [JsonPropertyName("starting_position")]
+        public Position StartingPosition { get; set; }
+        [JsonPropertyName("ending_position")]
+        public Position EndingPosition { get; set; }
 
         public override string ToString()
         {
