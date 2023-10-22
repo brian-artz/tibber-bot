@@ -17,6 +17,12 @@ namespace TibberBot.Cleaners
 
         public ExecutionRecord? Clean(Position start, IEnumerable<Command> commands)
         {
+            if (!commands.Any())
+            {
+                _logger.LogInformation("No commands given. I will go back to sleep...");
+                return null;
+            }
+
             var uniqueSpacesCleaned = new HashSet<Position>() { start };
             var currentPos = start;
             _logger.LogInformation("Starting new cleaning job at position: {pos}", start);
