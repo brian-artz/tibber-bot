@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  tibberbot_service:
+    container_name: tibber_bot
+    build: .
+    ports:
+      # service port
+      - "5000:80"
+      # postgres db port
+      - "5432:5432"
+    environment:
+      - ConnectionStrings__Executions=${db_connection}
