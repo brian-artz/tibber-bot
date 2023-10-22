@@ -10,6 +10,8 @@ You will need to define an environment variable `db_connection` containing a con
 
 > Tip: You can add the `db_connection` environment variable via a `.env` file 
 
+The database should contain a table called `executions` in order to store results. See [executionsTable.sql](./TibberBot/sql/executionsTable.sql) for details on how the table should be specified.
+
 The robot listens for new instructions on port `5000` via the `/tibber-developer-test/enter-path` endpoint. Here's an example request:
 
 ```(cURL)
