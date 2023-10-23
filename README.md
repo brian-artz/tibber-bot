@@ -6,9 +6,11 @@ A friendly and helpful office cleaner bot. Just tell it where to start and plot 
 
 The service can be started via `docker compose up`, which should build the service and all its dependencies before starting a container. 
 
-You will need to define an environment variable `db_connection` containing a connection string to the database where the robot's [ExecutionRecord](./TibberBot/Dto/ExecutionRecord.cs) will be stored after each successful run.
+You will need to define an environment variable `db_connection` containing a connection string to the database where the robot's [ExecutionRecord](./TibberBot/Dto/ExecutionRecord.cs) will be stored after each successful run. 
 
-> Tip: You can add the `db_connection` environment variable via a `.env` file 
+See the `ConnectionStrings` section of the [appsettings](./TibberBot/appsettings.json) file for how to format your connection string.
+
+> Tip: You can add the `db_connection` environment variable via a `.env` file.
 
 The database should contain a table called `executions` in order to store results. See [executionsTable.sql](./TibberBot/sql/executionsTable.sql) for details on how the table should be specified.
 
