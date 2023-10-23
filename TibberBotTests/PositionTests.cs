@@ -16,7 +16,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Calculate_New_Position_North(int steps)
         {
-            var newPos = _home.Calculate("north", steps);
+            var newPos = _home.CalculateNext("north", steps);
             Assert.Multiple(() =>
             {
                 Assert.That(newPos, Is.Not.EqualTo(_home));
@@ -33,7 +33,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Calculate_New_Position_South(int steps)
         {
-            var newPos = _home.Calculate("south", steps);
+            var newPos = _home.CalculateNext("south", steps);
             Assert.Multiple(() =>
             {
                 Assert.That(newPos, Is.Not.EqualTo(_home));
@@ -50,7 +50,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Calculate_New_Position_East(int steps)
         {
-            var newPos = _home.Calculate("east", steps);
+            var newPos = _home.CalculateNext("east", steps);
             Assert.Multiple(() =>
             {
                 Assert.That(newPos, Is.Not.EqualTo(_home));
@@ -67,7 +67,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Calculate_New_Position_West(int steps)
         {
-            var newPos = _home.Calculate("west", steps);
+            var newPos = _home.CalculateNext("west", steps);
             Assert.Multiple(() =>
             {
                 Assert.That(newPos, Is.Not.EqualTo(_home));
@@ -84,7 +84,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Enumerate_New_Positions_North(int steps)
         {
-            var newPosArr = _home.EnumerateNewPositions("north", steps).ToArray();
+            var newPosArr = _home.EnumeratePositions("north", steps).ToArray();
             Assert.Multiple(() =>
             {
                 Assert.That(newPosArr, Is.Not.Empty);
@@ -104,7 +104,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Enumerate_New_Positions_South(int steps)
         {
-            var newPosArr = _home.EnumerateNewPositions("south", steps).ToArray();
+            var newPosArr = _home.EnumeratePositions("south", steps).ToArray();
             Assert.Multiple(() =>
             {
                 Assert.That(newPosArr, Is.Not.Empty);
@@ -124,7 +124,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Enumerate_New_Positions_East(int steps)
         {
-            var newPosArr = _home.EnumerateNewPositions("east", steps).ToArray();
+            var newPosArr = _home.EnumeratePositions("east", steps).ToArray();
             Assert.Multiple(() =>
             {
                 Assert.That(newPosArr, Is.Not.Empty);
@@ -144,7 +144,7 @@ namespace TibberBotTests
         [TestCase(100000000)]
         public void Test_Enumerate_New_Positions_West(int steps)
         {
-            var newPosArr = _home.EnumerateNewPositions("west", steps).ToArray();
+            var newPosArr = _home.EnumeratePositions("west", steps).ToArray();
             Assert.Multiple(() =>
             {
                 Assert.That(newPosArr, Is.Not.Empty);

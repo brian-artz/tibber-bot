@@ -34,23 +34,31 @@ namespace TibberBot.Cleaners
                 foreach (var command in commands)
                 {
                     _logger.LogInformation("Calculating next move...");
-                    var newPos = Calculate(currentPos, command);
+                    var nextPos = CalculateNext(currentPos, command);
 
-                    if (!IsInBounds(newPos))
+                    if (!IsInBounds(nextPos))
                         throw new InvalidOperationException("Robot went out of bounds");
 
-                    if (!uniqueSpacesCleaned.Contains(newPos))
-                    {
-                        _logger.LogInformation("Cleaning new area...");
-                        var newArea = EnumerateNewPositions(currentPos, command);
-                        uniqueSpacesCleaned.UnionWith(newArea);
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Already cleaned this area");
-                    }
+                    // BUG: it's possible that some vertices/positions have not been visited but the ending pos has already been traversed
+                    // i.e. perfect squares will be missing a side in hashset...
+                    // can fix by enumerating pos and adding them all to the hashset, which will still not allow dups
+                    // but then an add is always performed for each position i.e., not as efficient
+                    //if (!uniqueSpacesCleaned.Contains(newPos))
+                    //{
+                    //    _logger.LogInformation("Cleaning new area...");
+                    //    var newArea = EnumerateNewPositions(currentPos, command);
+                    //    uniqueSpacesCleaned.UnionWith(newArea);
+                    //}
+                    //else
+                    //{
+                    //    _logger.LogInformation("Already cleaned this area");
+                    //}
 
-                    currentPos = newPos;
+                    _logger.LogInformation("Cleaning office area...");
+                    var newArea = EnumeratePositions(currentPos, command);
+                    uniqueSpacesCleaned.UnionWith(newArea);
+
+                    currentPos = nextPos;
                     commandsRun++;
                 }
             }
@@ -78,14 +86,14 @@ namespace TibberBot.Cleaners
                 && (p.X <= _upperRightBoundary.X && p.Y <= _upperRightBoundary.Y);
         }
 
-        private static Position Calculate(Position current, Command command)
+        private static Position CalculateNext(Position current, Command command)
         {
-            return current.Calculate(command.Direction, command.Steps);
+            return current.CalculateNext(command.Direction, command.Steps);
         }
 
-        private static IEnumerable<Position> EnumerateNewPositions(Position current, Command command)
+        private static IEnumerable<Position> EnumeratePositions(Position current, Command command)
         {
-            return current.EnumerateNewPositions(command.Direction, command.Steps);
+            return current.EnumeratePositions(command.Direction, command.Steps);
         }
     }
 }

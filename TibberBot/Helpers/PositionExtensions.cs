@@ -4,19 +4,19 @@ namespace TibberBot.Helpers
 {
     public static class PositionExtensions
     {
-        public static IEnumerable<Position> EnumerateNewPositions(this Position current, string direction, int steps)
+        public static IEnumerable<Position> EnumeratePositions(this Position current, string direction, int steps)
         {
             var posList = new List<Position>();
             for (int i = 0; i < steps; i++)
             {
-                var newPos = current.Calculate(direction, 1);
-                posList.Add(newPos);
-                current = newPos;
+                var next = current.CalculateNext(direction, 1);
+                posList.Add(next);
+                current = next;
             }
             return posList;
         }
 
-        public static Position Calculate(this Position current, string direction, int steps)
+        public static Position CalculateNext(this Position current, string direction, int steps)
         {
             return direction.ToLower() switch
             {
